@@ -19,20 +19,27 @@ imdb_dataset["review"] = imdb_dataset["review"].apply(lambda x: re.sub(r"[^a-zA-
 imdb_dataset["review"] = imdb_dataset["review"].apply(lambda x: re.sub(r"\s+", " ", x).strip())
 imdb_dataset["label"] = imdb_dataset["sentiment"].map({"positive": 1, "negative": 0})
 
-reviews = imdb_dataset["review"].tolist()
-labels = imdb_dataset["label"].values  
+training_data = imdb_dataset.iloc[:25000]
+testing_data = imdb_dataset.iloc[25000:]
+training_reviews = training_data["review"].tolist()
+training_labels = training_data["label"].values  
+testing_reviews = testing_data["review"].tolist()
+testing_labels = testing_data["label"].values  
 
 tokenizer = Tokenizer(num_words=vocabulary_size, oov_token="<UNK>")
-tokenizer.fit_on_texts(reviews)
-sequences = tokenizer.texts_to_sequences(reviews)  
+tokenizer.fit_on_texts(training_reviews)
+training_sequences = tokenizer.texts_to_sequences(training_reviews)  
+testing_sequences = tokenizer.texts_to_sequences(testing_reviews)
 
 for seq_len in sequence_lengths:
-    padded = pad_sequences(sequences, maxlen=seq_len, padding="post", truncating="post")
-    seq_strs = [" ".join(map(str, row)) for row in padded]
-    out_df = pd.DataFrame({
-        "sequence": seq_strs,
-        "label": labels
-    })
-    out_file = os.path.join(output_dir, f"imdb_seq{seq_len}.csv")
-    out_df.to_csv(out_file, index=False)
+    training_padded = pad_sequences(training_sequences, maxlen=seq_len, padding="post", truncating="post")
+    testing_padded = pad_sequences(testing_sequences, maxlen=seq_len, padding="post", truncating="post")
+    pd.DataFrame({
+    "sequence": [" ".join(map(str, row)) for row in training_padded],
+    "label": training_data["label"].values
+}).to_csv(os.path.join(output_dir, f"imdb_train_seq{seq_len}.csv"), index=False)
 
+    pd.DataFrame({
+        "sequence": [" ".join(map(str, row)) for row in testing_padded],
+        "label": testing_data["label"].values
+    }).to_csv(os.path.join(output_dir, f"imdb_test_seq{seq_len}.csv"), index=False)
