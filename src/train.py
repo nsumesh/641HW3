@@ -14,7 +14,6 @@ tf.random.set_seed(SEED)
 tf.config.experimental.enable_op_determinism()
 print(f"\n Random seed fixed to: {SEED}")
 
-# Hardware report
 device_name = tf.config.list_physical_devices('GPU')
 cpu_info = os.popen("sysctl -n machdep.cpu.brand_string").read().strip()
 ram_bytes = os.popen("sysctl -n hw.memsize").read().strip()
