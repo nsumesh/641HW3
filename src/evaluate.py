@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import os
 
-metrics = pd.read_csv("/Users/nsumesh/Documents/GitHub/641HW3/src/results/metrics.csv")
+metrics = pd.read_csv("/Users/nsumesh/Documents/GitHub/641HW3/results/metrics.csv")
 metrics.columns = [c.strip() for c in metrics.columns]
 
 print(f"Loaded {len(metrics)} experiments from metrics.csv")
@@ -36,7 +36,7 @@ plt.xlabel("Epochs")
 plt.ylabel("Loss")
 plt.legend()
 plt.tight_layout()
-plt.savefig("results/best_model_loss_curve.png", dpi=300)
+plt.savefig("/Users/nsumesh/Documents/GitHub/641HW3/results/best_model_loss_curve.png", dpi=300)
 plt.show()
 
 worst_loss = pd.read_csv(worst_loss_file)
@@ -47,7 +47,7 @@ plt.xlabel("Epochs")
 plt.ylabel("Loss")
 plt.legend()
 plt.tight_layout()
-plt.savefig("results/worst_model_loss_curve.png", dpi=300)
+plt.savefig("/Users/nsumesh/Documents/GitHub/641HW3/results/worst_model_loss_curve.png", dpi=300)
 plt.show()
 
 print("Saved best_model_loss_curve.png and worst_model_loss_curve.png")

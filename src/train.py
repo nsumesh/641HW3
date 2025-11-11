@@ -1,6 +1,3 @@
-# ----------------------------------------------------
-# Reproducible Grid Search Trainer
-# ----------------------------------------------------
 import os, time, random
 import numpy as np
 import pandas as pd
@@ -9,10 +6,6 @@ from sklearn.metrics import f1_score
 from tensorflow.keras.optimizers import Adam, SGD, RMSprop
 from models import build_rnn, build_lstm, build_bilstm
 
-
-# ----------------------------------------------------
-# Reproducibility
-# ----------------------------------------------------
 SEED = 42
 os.environ["PYTHONHASHSEED"] = str(SEED)
 random.seed(SEED)
@@ -31,7 +24,7 @@ print(f"Hardware: {'GPU' if device_name else 'CPU only'} | CPU: {cpu_info} | RAM
 
 epochs = 10
 batch_size = 32
-results_dir = "results/metrics.csv"
+results_dir = "/Users/nsumesh/Documents/GitHub/641HW3/results/metrics.csv"
 os.makedirs("results", exist_ok=True)
 
 CONFIGS = [
@@ -88,9 +81,6 @@ CONFIGS = [
 ]
 
 
-# ----------------------------------------------------
-# LOAD DATA
-# ----------------------------------------------------
 def load_data(seq_len):
     train = pd.read_csv(f"/Users/nsumesh/Documents/GitHub/641HW3/data/preprocessed/imdb_train_seq{seq_len}.csv")
     test  = pd.read_csv(f"/Users/nsumesh/Documents/GitHub/641HW3/data/preprocessed/imdb_test_seq{seq_len}.csv")
@@ -102,11 +92,8 @@ def load_data(seq_len):
     return training_data, training_labels, testing_data, testing_labels
 
 
-# ----------------------------------------------------
-# RUN SINGLE EXPERIMENT
-# ----------------------------------------------------
 def run_experiment(model_type, activation, optimizer_name, sequence_len, gradient_clip):
-    print(f"\n▶ {model_type:<6} | activation={activation:<7} | optimizer={optimizer_name:<8} | seq={sequence_len:<3} | clip={gradient_clip}")
+    print(f"\n{model_type:<6} | activation={activation:<7} | optimizer={optimizer_name:<8} | seq={sequence_len:<3} | clip={gradient_clip}")
     training_data, training_labels, testing_data, testing_labels = load_data(sequence_len)
 
     if model_type == "RNN":
@@ -148,9 +135,6 @@ def run_experiment(model_type, activation, optimizer_name, sequence_len, gradien
     }
 
 
-# ----------------------------------------------------
-# MAIN LOOP
-# ----------------------------------------------------
 results = []
 for i, (model_type, activation, optimizer, seq, clip) in enumerate(CONFIGS, start=1):
     print(f"\n=== Experiment {i}/{len(CONFIGS)} ===")
