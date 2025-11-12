@@ -1,0 +1,58 @@
+# plot_results.py
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import os
+
+'''
+Here, we evaluate the perfomance of our models from the configurations. The four plots we are generating here are
+- Accuracy vs Sequence Length and how it compares based on sequence lengths for all models
+- F1 Score vs Sequence Length and how it compares based on sequence lengths for all models
+- The reduction in loss over 10 epochs for the best model configuration found from the experiments
+- The reduction in loss over 10 epochs for the worst model configuration found from the experiments
+'''
+metrics = pd.read_csv("/Users/nsumesh/Documents/GitHub/641HW3/results/metrics.csv")
+metrics.columns = [c.strip() for c in metrics.columns]
+
+plt.figure(figsize=(8, 5))
+sns.lineplot(data=metrics, x="Seq Length", y="Accuracy", hue="Model", marker="o", errorbar=None)
+plt.title("Accuracy vs Sequence Length")
+plt.tight_layout()
+plt.savefig("results/accuracy_vs_seq_len.png", dpi=300)
+plt.show()
+
+plt.figure(figsize=(8, 5))
+sns.lineplot(data=metrics, x="Seq Length", y="F1 Score", hue="Model", marker="o", errorbar=None)
+plt.title("F1 Score vs Sequence Length")
+plt.tight_layout()
+plt.savefig("results/f1_vs_seq_len.png", dpi=300)
+plt.show()
+
+print("Saved plots: accuracy_vs_seq_len.png and f1_vs_seq_len.png")
+
+best_loss_file = "/Users/nsumesh/Documents/GitHub/641HW3/src/results/best_model.csv"
+worst_loss_file = "/Users/nsumesh/Documents/GitHub/641HW3/src/results/worst_model.csv"
+
+best_loss = pd.read_csv(best_loss_file)
+plt.figure(figsize=(7, 4))
+plt.plot(best_loss["loss"], label="Training Loss")
+plt.title("Best Model: LSTM (tanh, RMSProp, Seq=100, Gradient Clipping = True)")
+plt.xlabel("Epochs")
+plt.ylabel("Loss")
+plt.legend()
+plt.tight_layout()
+plt.savefig("/Users/nsumesh/Documents/GitHub/641HW3/results/best_model_loss_curve.png", dpi=300)
+plt.show()
+
+worst_loss = pd.read_csv(worst_loss_file)
+plt.figure(figsize=(7, 4))
+plt.plot(worst_loss["loss"], label="Training Loss")
+plt.title("Worst Model: BiLSTM (tanh, SGD, Seq=50, Gradient Clipping = True)")
+plt.xlabel("Epochs")
+plt.ylabel("Loss")
+plt.legend()
+plt.tight_layout()
+plt.savefig("/Users/nsumesh/Documents/GitHub/641HW3/results/worst_model_loss_curve.png", dpi=300)
+plt.show()
+
+print("Saved best_model_loss_curve.png and worst_model_loss_curve.png")
