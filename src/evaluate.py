@@ -4,10 +4,15 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import os
 
+'''
+Here, we evaluate the perfomance of our models from the configurations. The four plots we are generating here are
+- Accuracy vs Sequence Length and how it compares based on sequence lengths for all models
+- F1 Score vs Sequence Length and how it compares based on sequence lengths for all models
+- The reduction in loss over 10 epochs for the best model configuration found from the experiments
+- The reduction in loss over 10 epochs for the worst model configuration found from the experiments
+'''
 metrics = pd.read_csv("/Users/nsumesh/Documents/GitHub/641HW3/results/metrics.csv")
 metrics.columns = [c.strip() for c in metrics.columns]
-
-print(f"Loaded {len(metrics)} experiments from metrics.csv")
 
 plt.figure(figsize=(8, 5))
 sns.lineplot(data=metrics, x="Seq Length", y="Accuracy", hue="Model", marker="o", errorbar=None)

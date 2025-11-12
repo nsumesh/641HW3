@@ -6,20 +6,27 @@ from sklearn.metrics import f1_score
 from tensorflow.keras.optimizers import Adam, SGD, RMSprop
 from models import build_rnn, build_lstm, build_bilstm
 
-SEED = 42
-os.environ["PYTHONHASHSEED"] = str(SEED)
-random.seed(SEED)
-np.random.seed(SEED)
-tf.random.set_seed(SEED)
-tf.config.experimental.enable_op_determinism()
-print(f"\n Random seed fixed to: {SEED}")
 
+
+#For reproducibility, a random seed of 42 has been set here
+os.environ["PYTHONHASHSEED"] = str(42)
+random.seed(42)
+np.random.seed(42)
+tf.random.set_seed(42)
+tf.config.experimental.enable_op_determinism()
+print(f"\n Random seed fixed to: {42}")
+
+#Device 
 device_name = tf.config.list_physical_devices('GPU')
 cpu_info = os.popen("sysctl -n machdep.cpu.brand_string").read().strip()
 ram_bytes = os.popen("sysctl -n hw.memsize").read().strip()
 ram_gb = round(int(ram_bytes) / (1024**3), 2)
 print(f"Hardware: {'GPU' if device_name else 'CPU only'} | CPU: {cpu_info} | RAM: {ram_gb} GB\n")
 
+
+'''The parameters are initialized here, we set the epochs and batch size for each model to be trained on.
+I also used a random set of configurations consisting of different parameters changed in each run. There is a total of 50 configurations
+ '''
 
 epochs = 10
 batch_size = 32
@@ -80,6 +87,11 @@ CONFIGS = [
 ]
 
 
+'''
+At this stage, we load the data based on the configuration. It loads the preprocessed data which consists of each sequence length of
+25, 50, 100 tokens per sequence.
+'''
+
 def load_data(seq_len):
     train = pd.read_csv(f"/Users/nsumesh/Documents/GitHub/641HW3/data/preprocessed/imdb_train_seq{seq_len}.csv")
     test  = pd.read_csv(f"/Users/nsumesh/Documents/GitHub/641HW3/data/preprocessed/imdb_test_seq{seq_len}.csv")
@@ -89,6 +101,12 @@ def load_data(seq_len):
     testing_data  = np.array([np.fromstring(s, sep=' ') for s in test["sequence"]])
     testing_labels  = test["label"].values
     return training_data, training_labels, testing_data, testing_labels
+
+'''
+This function runs the experiment, it takes in the type of model, activation function, optimizer name, sequence length and if the gradient is clippd.
+Based on these parameters, it builds the model and the various settings associated using builder functions. The function keeps track of time taken per epoch to train
+the model, and also keeps track of the loss at each step. Based off the results, it then calculates the f1 score and the accuracy associated with the result.
+'''
 
 
 def run_experiment(model_type, activation, optimizer_name, sequence_len, gradient_clip):
@@ -133,7 +151,9 @@ def run_experiment(model_type, activation, optimizer_name, sequence_len, gradien
         "Epoch Time (s)": train_time,
     }
 
-
+'''
+This loop runs the 50 configurations, using run experiment by passing each setting through it as arguments for the function. This is appended to a dataframe and then saved to a csv file.
+'''
 results = []
 for i, (model_type, activation, optimizer, seq, clip) in enumerate(CONFIGS, start=1):
     print(f"\n=== Experiment {i}/{len(CONFIGS)} ===")
